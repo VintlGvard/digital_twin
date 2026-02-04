@@ -1,11 +1,14 @@
 import React, {useState, useEffect} from 'react'
 import axios from "axios"
 import {useMutation} from '@tanstack/react-query'
+import { useNavigate } from 'react-router-dom'
 
 function AuthPage() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPass, setShowPass] = useState(false)
+
+  const nav = useNavigate()
 
   const [steps, setSteps] = useState([
     {id: '3', txt: 'Принять таблетку'},
@@ -63,9 +66,9 @@ function AuthPage() {
       </form>
 
       <div>
-        <a href="#">Зарегистрироваться</a>
+        <a href="" onClick={() => nav('/register')}>Зарегистрироваться</a>
         <br />
-        <a href="#">Забыли пароль?</a>
+        <a href="">Забыли пароль?</a>
       </div>
     </div>
   )
