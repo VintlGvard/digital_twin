@@ -1,5 +1,10 @@
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
-from .models import User, MedicalRecord, Diary, DiaryPage, Appointment
+from .models import MedicalRecord, Diary, DiaryPage, Appointment
+from djoser.serializers import UserCreateSerializer as BUC
+from djoser.serializers import UserSerializer as BU
+
+User = get_user_model()
 
 class DiartPageSer(serializers.ModelSerializer):
     class Meta:
@@ -22,10 +27,21 @@ class MedicalRecordSerializer(serializers.ModelSerializer):
         model = MedicalRecord
         fields = "__all__"
 
-class UserSer(serializers.ModelSerializer):
+class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
-        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'surname', 'role', 'gender', 'phone_number', 'created_at', 'updated_at']
+        model = User
+        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'surname', 'role', 'gender', 'phone_number']
         read_only_fields = ['created_at', 'updated_at']
+
+class CustomUserCreateSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'surname', 'role', 'gender', 'phone_number', 'password']
+        extra_kwargs = {'password': {'write_only': True}}
+
+    def create(self, validated_data):
+        return User.objects.create_user(**validated_data)
 
 class AppointmentSer(serializers.ModelSerializer):
     doctor_name = serializers.ReadOnlyField(source='doctor.get_full_name')

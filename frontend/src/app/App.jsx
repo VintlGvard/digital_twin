@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import './App.css'
+import RegPage1 from '../pages/RegPage1'
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
     <>
-      123
+      <RegPage1/>
     </>
   )
 }

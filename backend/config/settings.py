@@ -83,7 +83,7 @@ REST_FRAMEWORK = {
         'rest_framework.throttling.AnonRateThrottle'
     ],
     'DEFAULT_TROTTLE_RATES': {
-        'anon': '5/min'
+        'anon': '2/min'
     }
 }
 
@@ -101,8 +101,17 @@ DATABASES = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
-    "REFRESH_TOKEN_LIFETIME": timedelta(minutes=30)
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=2),
+    "REFRESH_TOKEN_LIFETIME": timedelta(minutes=5)
+}
+
+DJOSER = {
+    'LOGIN_FIELD': 'email',
+    'SERIALIZERS': {
+        'user_create': 'app.serializers.CustomUserCreateSerializer',
+        'user': 'app.serializers.CustomUserSerializer',
+        'current_user': 'app.serializers.CustomUserSerializer',
+    },
 }
 
 

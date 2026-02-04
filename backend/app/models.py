@@ -6,7 +6,7 @@ class User(AbstractUser):
     email = models.EmailField(unique=True)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
+    REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
 
     first_name = models.CharField(max_length=32)
     last_name = models.CharField(max_length=32)
@@ -24,7 +24,7 @@ class User(AbstractUser):
     ]
 
     role = models.CharField(choices=ROLE, blank=False, default='patient', max_length=20)
-    gender = models.CharField(choices=GENDER, blank=False, max_length=10)
+    gender = models.CharField(choices=GENDER, blank=True, max_length=10)
     phone_number = models.CharField(max_length=20, blank=True, unique=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
@@ -35,10 +35,6 @@ class User(AbstractUser):
 
     def get_full_name(self):
         return f"{self.first_name} {self.last_name} {self.surname}".strip()
-
-
-
-
 
 class MedicalRecord(models.Model):
     card_number = models.CharField(max_length=50, unique=True)
