@@ -41,8 +41,8 @@ INSTALLED_APPS = [
     'djoser',
     'corsheaders',
     'django_filters',
-    'drf_spectacular'
-
+    'drf_spectacular',
+    'app.apps.AppConfig'
 ]
 
 MIDDLEWARE = [
@@ -117,6 +117,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
+
+AUTH_USER_MODEL = 'app.User'
 
 TIME_ZONE = 'UTC'
 
