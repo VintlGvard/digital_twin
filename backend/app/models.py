@@ -1,5 +1,6 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractUser, BaseUserManager
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 class User(AbstractUser):
     email = models.EmailField(unique=True)
@@ -12,42 +13,98 @@ class User(AbstractUser):
     surname = models.CharField(max_length=32)
 
     ROLE = [
-        ('Врач', 'doctor'),
-        ('Пациент', 'patient')
+        ('doctor', 'Доктор'),
+        ('patient', 'Пациент'),
+        ('admin', 'Администратор')
     ]
 
     GENDER = [
-        ('Мужчина', 'man'),
-        ('Женщина', 'woman')
+        ('male', 'Мужской'),
+        ('female', 'Женский')
     ]
 
-    role = models.CharField(choices=ROLE, blank=False, default='patient')
-    gender = models.CharField(choices=GENDER, blank=False)
-
-    blood_type = models.CharField(max_length=8)
-    snils = models.CharField(max_length=11, blank=True, null=True)
-    series_passport = models.CharField(max_length=4, blank=True)
-    numbers_passport = models.CharField(max_length=6, blank=True)
-    phone_number = models.CharField(max_length=18, blank=True, unique=True)
+    role = models.CharField(choices=ROLE, blank=False, default='patient', max_length=20)
+    gender = models.CharField(choices=GENDER, blank=False, max_length=10)
+    phone_number = models.CharField(max_length=20, blank=True, unique=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.email
+        return f"{self.username} ({self.get_full_name()})"
 
-class Appointment(models.Model):
-    doctors = models.ForeignKey(User, on_delete=models.CASCADE)
-    info = models.CharField(max_length=1024)
-    datetime = models.DateTimeField(auto_now_add=True)
+    def get_full_name(self):
+        return f"{self.first_name} {self.last_name} {self.surname}".strip()
 
-class MedicalBook(models.Model):
-    appointments = models.ForeignKey(Appointment, on_delete=models.CASCADE, null=True, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+
+
+
+
+class MedicalRecord(models.Model):
+    card_number = models.CharField(max_length=50, unique=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    snils = models.CharField(max_length=11, blank=True, null=True)
+    series_passport = models.CharField(max_length=4, blank=True)
+    numbers_passport = models.CharField(max_length=6, blank=True)
+
+    blood_type = models.CharField(max_length=5, blank=True, null=True)
+    chronic_diseases = models.TextField(blank=True)
+
+    def __str__(self):
+        return f"Медкарта {self.card_number} ({self.user.email})"
+
 
 class Patient(models.Model):
     patient_data = models.OneToOneField(User, on_delete=models.CASCADE)
-    medical_book = models.OneToOneField(MedicalBook, on_delete=models.CASCADE)
+    medical_book = models.OneToOneField(MedicalRecord, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.patient_data.email
+
+class Diary(models.Model):
+    title = models.CharField(max_length=200)
+    medical_record = models.ForeignKey(MedicalRecord, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.title} (Карта №{self.medical_record.card_number})"
+
+class DiaryPage(models.Model):
+    diary = models.ForeignKey(Diary, on_delete=models.CASCADE)
+    timestamp = models.DateTimeField()
+    pain_level = models.PositiveSmallIntegerField(validators=[MinValueValidator(0), MaxValueValidator(10)], null=True, blank=True)
+    symptoms = models.TextField(blank=True)
+    wellbeing = models.CharField(max_length=20, default='good')
+
+    class Meta:
+        ordering = ['-timestamp']
+
+    def __str__(self):
+        return f"Запись {self.diary.title} от {self.timestamp}"
+
+class Appointment(models.Model):
+    STATUS = (
+        ('scheduled', 'Запланировано'),
+        ('completed', 'Завершено'),
+        ('cancelled', 'Отменено'),
+    )
+    doctor = models.ForeignKey(User, on_delete=models.CASCADE, limit_choices_to={'role': 'doctor'})
+    medical_record = models.ForeignKey(MedicalRecord, on_delete=models.CASCADE)
+    data_time = models.DateTimeField(verbose_name="Время приема")
+    reason = models.TextField()
+    diagnosis = models.TextField(blank=True)
+    recommendations = models.TextField(blank=True)
+
+    status = models.CharField(max_length=20, choices=STATUS, default='scheduled')
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-data_time']
+
+    def __str__(self):
+        return f"Прием {self.data_time}: {self.doctor.last_name} -> {self.medical_record.user.last_name}"
+
+
