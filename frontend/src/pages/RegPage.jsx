@@ -28,7 +28,7 @@ export default function RegPage() {
     mutationFn: (data) => axios.post('http://localhost:8000/api/auth/users/', data),
     onSuccess: (res) => {
       console.log(res.data);
-      nav('/main'),
+      nav('/login'),
       alert('Аккаунт создан!')
     },
     onError: (err) => console.log(err.response?.data)
@@ -58,11 +58,11 @@ export default function RegPage() {
     <div style={{ padding: '20px' }}>
       <h3>Шаг 1: Доступ</h3>
       <form onSubmit={nextStep1}>
-        <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required /><br/>
-        <input type="text" placeholder="Логин" value={username} onChange={e => setUsername(e.target.value)} required /><br/>
-        <input type="password" placeholder="Пароль" onChange={e => setPassword(e.target.value)} required />
-        <div style={{ fontSize: '12px' }}>{strengthText}</div>
-        <input type="password" placeholder="Повторите пароль" onChange={e => setRepeatPassword(e.target.value)} required /><br/>
+        <input type="email" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} required /><br/><br/>
+        <input type="text" placeholder="Логин" value={username} onChange={e => setUsername(e.target.value)} required /><br/><br/>
+        <input type="password" placeholder="Пароль" onChange={e => setPassword(e.target.value)} required /><br/>
+        <div style={{ fontSize: '12px' }}>{strengthText}</div><br/>
+        <input type="password" placeholder="Повторите пароль" onChange={e => setRepeatPassword(e.target.value)} required /><br/><br/>
         <button type="submit" disabled={password.length < 12}>Далее</button>
       </form>
     </div>

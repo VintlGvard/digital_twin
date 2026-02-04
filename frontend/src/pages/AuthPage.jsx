@@ -23,6 +23,7 @@ function AuthPage() {
     mutationFn: (data) => axios.post('http://127.0.0.1:8000/api/auth/jwt/create/', data),
     onSuccess: (res) => {
       localStorage.setItem('token', res.data.access)
+      nav('/main')
       alert('Вход выполнен')
     },
     onError: () => alert('Ошибка! Проверь данные')
