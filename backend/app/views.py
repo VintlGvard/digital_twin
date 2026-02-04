@@ -1,14 +1,9 @@
 from django.shortcuts import render
 from rest_framework import permissions, viewsets
-from .models import User, Diary, DiaryPage
-from .serializers import PatientSer, DiarySer, DiartPageSer, MedicalRecordSerializer
+from .models import User, Diary, DiaryPage, MedicalRecord, Appointment
+from .serializers import DiarySer, DiartPageSer, MedicalRecordSerializer, AppointmentSer
 from .filters import DiaryPageFilter
 from django_filters.rest_framework import DjangoFilterBackend
-
-class PatientViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = PatientSer
-    permission_classes = [permissions.IsAuthenticated]
 
 class DiaryViewSet(viewsets.ModelViewSet):
     serializer_class = DiarySer
@@ -31,8 +26,20 @@ class MedicalRecordViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return Diary.objects.filter(medical_record__user=self.request.user)
+        return MedicalRecord.objects.filter(medical_record__user=self.request.user)
 
     def perform_create(self, serializer):
         medical_record = self.request.user.medical_record
         serializer.save(medical_record=medical_record)
+
+class AppointmentViewSet(viewsets.ModelViewSet):
+    serializer_class = AppointmentSer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.role == 'doctor':
+            return Appointment.objects.filter(doctor=user)
+        elif user.role == 'patient':
+            return Appointment.objects.filter(medical_record__user=user)
+        return Appointment.objects.none()

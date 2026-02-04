@@ -54,14 +54,6 @@ class MedicalRecord(models.Model):
     def __str__(self):
         return f"Медкарта {self.card_number} ({self.user.email})"
 
-
-class Patient(models.Model):
-    patient_data = models.OneToOneField(User, on_delete=models.CASCADE)
-    medical_book = models.OneToOneField(MedicalRecord, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.patient_data.email
-
 class Diary(models.Model):
     title = models.CharField(max_length=200)
     medical_record = models.ForeignKey(MedicalRecord, on_delete=models.CASCADE)
