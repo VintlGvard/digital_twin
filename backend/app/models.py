@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator, MinLengthValidator
 
 class User(AbstractUser):
     email = models.EmailField(unique=True)
@@ -40,9 +40,9 @@ class MedicalRecord(models.Model):
     card_number = models.CharField(max_length=50, unique=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
-    snils = models.CharField(max_length=11, blank=True, null=True)
-    series_passport = models.CharField(max_length=4, blank=True)
-    numbers_passport = models.CharField(max_length=6, blank=True)
+    snils = models.CharField(max_length=11, blank=True, null=True, validators=[MinLengthValidator(11)])
+    series_passport = models.CharField(max_length=4, blank=True, validators=[MinLengthValidator(4)])
+    numbers_passport = models.CharField(max_length=6, blank=True, validators=[MinLengthValidator(6)])
 
     blood_type = models.CharField(max_length=5, blank=True, null=True)
     chronic_diseases = models.TextField(blank=True)
@@ -62,12 +62,12 @@ class DiaryPage(models.Model):
     diary = models.ForeignKey(Diary, on_delete=models.CASCADE)
     timestamp = models.DateTimeField()
     systolic = models.PositiveSmallIntegerField(validators=[MinValueValidator(40), MaxValueValidator(250)], null=True, blank=True)
-    diasolic = models.PositiveSmallIntegerField(validators=[MinValueValidator(20), MaxValueValidator(150)], null=True, blank=True)
+    diastolic = models.PositiveSmallIntegerField(validators=[MinValueValidator(20), MaxValueValidator(150)], null=True, blank=True)
     glucose = models.DecimalField(max_digits=4, decimal_places=1, null=True, blank=True)
     pain_level = models.PositiveSmallIntegerField(validators=[MinValueValidator(0), MaxValueValidator(10)], null=True, blank=True)
     symptoms = models.TextField(blank=True)
     wellbeing = models.CharField(max_length=20, default='good')
-    desription = models.TextField(blank=True)
+    description = models.TextField(blank=True)
 
     class Meta:
         ordering = ['-timestamp']
@@ -76,9 +76,9 @@ class DiaryPage(models.Model):
         return f"Запись {self.diary.title} от {self.timestamp}"
 
     def get_bp_status(self):
-        if self.systolic <= self.diasolic:
+        if self.systolic <= self.diastolic:
             return 'Ошибка'
-        if self.systolic >= 180 or self.diasolic >= 120:
+        if self.systolic >= 180 or self.diastolic >= 120:
             return 'Критическое'
         return 'Нормальное'
 
@@ -93,7 +93,7 @@ class Appointment(models.Model):
         ('cancelled', 'Отменено'),
     )
     doctor = models.ForeignKey(User, on_delete=models.CASCADE, limit_choices_to={'role': 'doctor'})
-    medical_record = models.ForeignKey(MedicalRecord, on_delete=models.CASCADE)
+    medical_record = models.ForeignKey(MedicalRecord, on_delete=models.PROTECT)
     data_time = models.DateTimeField(verbose_name="Время приема")
     reason = models.TextField()
     diagnosis = models.TextField(blank=True)

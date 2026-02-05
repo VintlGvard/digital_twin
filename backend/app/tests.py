@@ -4,9 +4,9 @@ from .models import DiaryPage
 
 class MedicalTest(TestCase):
     def test_blood_pressure(self):
-        page = DiaryPage(systolic=120, diasolic=80)
-        crisis_page = DiaryPage(systolic=190, diasolic=120)
-        error_page = DiaryPage(systolic=80, diasolic=100)
+        page = DiaryPage(systolic=120, diastolic=80)
+        crisis_page = DiaryPage(systolic=190, diastolic=120)
+        error_page = DiaryPage(systolic=80, diastolic=100)
 
         self.assertEqual(page.get_bp_status(), 'Нормальное')
         self.assertEqual(crisis_page.get_bp_status(), 'Критическое')
