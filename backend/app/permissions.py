@@ -1,4 +1,4 @@
-from rest_framework.permissions import BasePermission, IsAdminUser, SAFE_METHODS
+from rest_framework.permissions import BasePermission, SAFE_METHODS
 
 class IsDoctor(BasePermission):
     def has_permission(self, request, view):

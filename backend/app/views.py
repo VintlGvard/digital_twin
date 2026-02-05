@@ -1,6 +1,5 @@
-from django.shortcuts import render
 from rest_framework import permissions, viewsets, filters
-from .models import User, Diary, DiaryPage, MedicalRecord, Appointment
+from .models import Diary, DiaryPage, MedicalRecord, Appointment
 from .serializers import DiarySer, DiartPageSer, MedicalRecordSerializer, AppointmentSer
 from .filters import DiaryPageFilter
 from django_filters.rest_framework import DjangoFilterBackend

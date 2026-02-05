@@ -1,8 +1,6 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from .models import MedicalRecord, Diary, DiaryPage, Appointment
-from djoser.serializers import UserCreateSerializer as BUC
-from djoser.serializers import UserSerializer as BU
 
 User = get_user_model()
 
