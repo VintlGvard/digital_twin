@@ -61,15 +61,30 @@ class Diary(models.Model):
 class DiaryPage(models.Model):
     diary = models.ForeignKey(Diary, on_delete=models.CASCADE)
     timestamp = models.DateTimeField()
+    systolic = models.PositiveSmallIntegerField(validators=[MinValueValidator(40), MaxValueValidator(250)], null=True, blank=True)
+    diasolic = models.PositiveSmallIntegerField(validators=[MinValueValidator(20), MaxValueValidator(150)], null=True, blank=True)
+    glucose = models.DecimalField(max_digits=4, decimal_places=1, null=True, blank=True)
     pain_level = models.PositiveSmallIntegerField(validators=[MinValueValidator(0), MaxValueValidator(10)], null=True, blank=True)
     symptoms = models.TextField(blank=True)
     wellbeing = models.CharField(max_length=20, default='good')
+    desription = models.TextField(blank=True)
 
     class Meta:
         ordering = ['-timestamp']
 
     def __str__(self):
         return f"Запись {self.diary.title} от {self.timestamp}"
+
+    def get_bp_status(self):
+        if self.systolic <= self.diasolic:
+            return 'Ошибка'
+        if self.systolic >= 180 or self.diasolic >= 120:
+            return 'Критическое'
+        return 'Нормальное'
+
+    def calculate_dose(self, weight, mg_per_kg, limit):
+        dose = weight * mg_per_kg
+        return min(dose, limit)
 
 class Appointment(models.Model):
     STATUS = (
