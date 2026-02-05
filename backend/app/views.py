@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from rest_framework import permissions, viewsets
+from rest_framework import permissions, viewsets, filters
 from .models import User, Diary, DiaryPage, MedicalRecord, Appointment
 from .serializers import DiarySer, DiartPageSer, MedicalRecordSerializer, AppointmentSer
 from .filters import DiaryPageFilter
@@ -21,16 +21,21 @@ class DiaryPageViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         return DiaryPage.objects.filter(diary__user=self.request.user)
 
-class MedicalRecordViewSet(viewsets.ReadOnlyModelViewSet):
+
+class MedicalRecordViewSet(viewsets.ModelViewSet):
     serializer_class = MedicalRecordSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def get_queryset(self):
-        return MedicalRecord.objects.filter(medical_record__user=self.request.user)
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_fields = ['card_number']
+    search_fields = ['card_number', 'user__last_name', 'user__first_name']
 
-    def perform_create(self, serializer):
-        medical_record = self.request.user.medical_record
-        serializer.save(medical_record=medical_record)
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_anonymous:
+            return MedicalRecord.objects.none()
+        if getattr(user, 'role', '') == 'doctor' or user.is_staff:
+            return MedicalRecord.objects.all()
 
 class AppointmentViewSet(viewsets.ModelViewSet):
     serializer_class = AppointmentSer

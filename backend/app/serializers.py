@@ -19,9 +19,15 @@ class DiarySer(serializers.ModelSerializer):
         model = Diary
         fields = '__all__'
 
+class UserShortSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'first_name', 'last_name', 'surname', 'phone_number', 'role']
+
 class MedicalRecordSerializer(serializers.ModelSerializer):
     diaries = DiarySer(many=True, read_only=True)
     patient_name = serializers.ReadOnlyField(source='user.get_full_name')
+    user = UserShortSerializer(read_only=True)
 
     class Meta:
         model = MedicalRecord
