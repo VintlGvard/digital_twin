@@ -10,7 +10,7 @@ export default function RegPage() {
   const [username, setUsername] = useState('')
   const [first_name, setFirstName] = useState('')
   const [last_name, setLastName] = useState('')
-  const [surname, setSurname] = useState('')
+  const [middle_name, setMiddleName] = useState('')
   const [email, setEmail] = useState('')
   const [phone_number, setPhone] = useState('')
   const [password, setPassword] = useState('')
@@ -51,7 +51,7 @@ export default function RegPage() {
 
   const handleFinalSubmit = (e) => {
     e.preventDefault()
-    reg.mutate({ email, password, username, first_name, last_name, surname, phone_number })
+    reg.mutate({ email, password, username, first_name, last_name, middle_name, phone_number })
   };
 
   if (step === 1) return (
@@ -86,7 +86,7 @@ export default function RegPage() {
       <form onSubmit={handleFinalSubmit}>
         <input type="text" placeholder="Фамилия" onChange={e => setFirstName(e.target.value)} required /><br/><br/>
         <input type="text" placeholder="Имя" onChange={e => setLastName(e.target.value)} required /><br/><br/>
-        <input type="text" placeholder="Отчество" onChange={e => setSurname(e.target.value)} required /><br/><br/>
+        <input type="text" placeholder="Отчество" onChange={e => setMiddleName(e.target.value)} required /><br/><br/>
         <input type="text" placeholder="Телефон" onChange={e => setPhone(e.target.value)} required /><br/><br/>
         <label>
           <input type="checkbox" checked={agreed} onChange={e => setAgreed(e.target.checked)} />

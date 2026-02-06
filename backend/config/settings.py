@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django_filters',
     'drf_spectacular',
     'app.apps.AppConfig',
+    'django_seed'
 ]
 
 MIDDLEWARE = [
@@ -89,7 +90,6 @@ REST_FRAMEWORK = {
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
@@ -101,8 +101,8 @@ DATABASES = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=100),
-    "REFRESH_TOKEN_LIFETIME": timedelta(minutes=500)
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=10),
+    "REFRESH_TOKEN_LIFETIME": timedelta(minutes=30)
 }
 
 DJOSER = {
@@ -150,6 +150,7 @@ USE_I18N = True
 
 USE_TZ = True
 
+FAKER_LOCALE = 'ru_RU'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/

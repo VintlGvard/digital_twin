@@ -52,10 +52,8 @@ export default function DashboardPage() {
   }
 
   const handleSearch = async (e) => {
-      const query = e.target.value
-      setSearch(query)
-      const res = await getPatients(query)
-      setPatients(res.data)
+    e.preventDefault()
+    // Заглушка
   }
 
   const handleOpenBooking = (patientId) => {
@@ -117,11 +115,15 @@ export default function DashboardPage() {
         </div>
 
         <h2>Реестр пациентов</h2>
-        <input 
+        <form onSubmit={handleSearch}>
+           <input 
             placeholder="Поиск по ФИО или номеру карты..." 
             value={search}
             onChange={handleSearch}
-        />
+            />
+            <button type='submit'>Поиск</button>
+        </form>
+        
         
         <table border="1">
             <thead>

@@ -1,6 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from django.core.validators import MinValueValidator, MaxValueValidator, MinLengthValidator
+from django.core.validators import MinValueValidator, MaxValueValidator, MinLengthValidator, MaxLengthValidator, integer_validator
 
 class User(AbstractUser):
     email = models.EmailField(unique=True)
@@ -10,7 +10,7 @@ class User(AbstractUser):
 
     first_name = models.CharField(max_length=32)
     last_name = models.CharField(max_length=32)
-    surname = models.CharField(max_length=32)
+    middle_name = models.CharField(max_length=32)
 
     ROLE = [
         ('doctor', 'Доктор'),
@@ -34,15 +34,15 @@ class User(AbstractUser):
         return f"{self.username} ({self.get_full_name()})"
 
     def get_full_name(self):
-        return f"{self.first_name} {self.last_name} {self.surname}".strip()
+        return f"{self.first_name} {self.last_name} {self.middle_name}".strip()
 
 class MedicalRecord(models.Model):
-    card_number = models.CharField(max_length=50, unique=True)
+    card_number = models.CharField(max_length=20,unique=True, validators=[MinLengthValidator(20), integer_validator])
     user = models.OneToOneField(User, on_delete=models.CASCADE)
 
-    snils = models.CharField(max_length=11, blank=True, null=True, validators=[MinLengthValidator(11)])
-    series_passport = models.CharField(max_length=4, blank=True, validators=[MinLengthValidator(4)])
-    numbers_passport = models.CharField(max_length=6, blank=True, validators=[MinLengthValidator(6)])
+    snils = models.CharField(max_length=11, blank=True, null=True, validators=[MinLengthValidator(11), integer_validator])
+    series_passport = models.CharField(max_length=4, blank=True, validators=[MinLengthValidator(4), integer_validator])
+    numbers_passport = models.CharField(max_length=6, blank=True, validators=[MinLengthValidator(6), integer_validator])
 
     blood_type = models.CharField(max_length=5, blank=True, null=True)
     chronic_diseases = models.TextField(blank=True)

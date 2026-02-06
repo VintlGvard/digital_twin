@@ -40,3 +40,8 @@
 .read-the-docs {
   color: #888;
 }
+
+input {
+  position: relative;
+  z-index: 9999;
+}

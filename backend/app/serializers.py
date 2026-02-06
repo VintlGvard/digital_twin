@@ -20,7 +20,7 @@ class DiarySer(serializers.ModelSerializer):
 class UserShortSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'first_name', 'last_name', 'surname', 'phone_number', 'role']
+        fields = ['id', 'first_name', 'last_name', 'middle_name', 'phone_number', 'role']
 
 class MedicalRecordSerializer(serializers.ModelSerializer):
     diaries = DiarySer(many=True, read_only=True)
@@ -34,14 +34,14 @@ class MedicalRecordSerializer(serializers.ModelSerializer):
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'surname', 'role', 'gender', 'phone_number']
+        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'middle_name', 'role', 'gender', 'phone_number']
         read_only_fields = ['created_at', 'updated_at']
 
 class CustomUserCreateSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True)
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'surname', 'role', 'gender', 'phone_number', 'password']
+        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'middle_name', 'role', 'gender', 'phone_number', 'password']
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
